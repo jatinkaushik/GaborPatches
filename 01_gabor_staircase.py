@@ -73,7 +73,7 @@ rd.shuffle(trial_order)
 ### Visuals ###
 
 #window
-win = visual.Window(size=[800, 600], color=[1,1,1], screen = 0, fullscr = False, units = 'pix', blendMode = 'avg')
+win = visual.Window(size=[800, 600],  screen = 0, fullscr = False, units = 'pix', blendMode = 'avg')
 win.setMouseVisible(False)
 
 #Gabor PARAMETERS
