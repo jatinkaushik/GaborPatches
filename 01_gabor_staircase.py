@@ -5,12 +5,10 @@ from psychopy import  gui, visual, core, data, event, logging
 from time import strftime
 from random import choice
 from numpy.random import choice as choice2
+from numpy.random import random
+import random as rd
 import numpy as np
-import random
 import csv
-import pandas
-import matplotlib
-import matplotlib.pyplot as plt
 
 ##### SETUP #####
 
@@ -18,13 +16,13 @@ import matplotlib.pyplot as plt
 
 ###### EDIT PARAMETERS BELOW #######
 
-num_trials = 100        # number of trials in the experiment on target side
+num_trials = 10  # number of trials in the experiment on target side
 stim_dur = 2.0     # time in seconds that the subliminal stim appears on the screen [strong,weak,catch]
 stepsize = 0.005     # The stepsize for the staircase procedure
 response_dur = 2.0   # time the response period stays on the screen
 iti_durs = [.5,1]  # time with no no image present between trials
-stim_size = 200
-initalOpacity = 0.15         #size of the stimulus on screen
+stim_size = 512
+initalOpacity = 0.07         #size of the stimulus on screen
 response_keys = {'left':'b','right':'z'}     # keys to use for a left response and a right response
 response_keys_inv = {v: k for k, v in response_keys.items()}
 reskeys_list = ['b','z']
@@ -69,13 +67,13 @@ for i in range(int(num_trials)):
 	trial_states[n] = {'target':'right'}
 
 trial_order = list(range(1,(1+num_trials)))
-random.shuffle(trial_order)
+rd.shuffle(trial_order)
 
 
 ### Visuals ###
 
 #window
-win = visual.Window(size=[800, 600], color=[1,1,1], screen = 0, fullscr = False, units = 'pix')
+win = visual.Window(size=[800, 600], color=[1,1,1], screen = 0, fullscr = False, units = 'pix', blendMode = 'avg')
 win.setMouseVisible(False)
 
 #Gabor PARAMETERS
@@ -154,11 +152,11 @@ experiment_clock = core.Clock()
 
 ### Results Logging ###
 time_stamp = strftime('%d-%m-%Y_%H:%M:%S').replace(':','_')
-output_file_path = 'results/%s_%s_%s_%s.csv'%(subid,session,time_stamp)
+output_file_path = 'results/%s_%s_%s.csv'%(subid,session,time_stamp)
 output_file = open(output_file_path,'w+')
 
 ###TO DO
-output_file.write('trial,trial_type,response,correct,response_time,cumulative_response_time,iti_onset,iti_dur,stim_onset,stim_dur,response_onset,response_dur,target_side\n')
+output_file.write('trial,trial_type,response,correct,response_time,cumulative_response_time,iti_onset,iti_dur,stim_onset,stim_dur,opacity\n')
 output_file.flush()
 
 
@@ -317,6 +315,7 @@ for shuffled_trial in trial_order:
 		gabor.draw()
 		fixation.draw()
 		win.flip()
+		#event.waitKeys(keyList=reskeys_list)
 		#response collection
 		if not responded:
 			response = event.getKeys(keyList=reskeys_list, timeStamped=True)
@@ -325,33 +324,29 @@ for shuffled_trial in trial_order:
 				cumulative_response_time = round(experiment_clock.getTime(),3)
 				response_time = round(experiment_clock.getTime() - elapse_time - iti_dur,3)
 				sub_response = response_keys_inv[response[0][0]]
-				if version == 'oddball':
-					if sub_response == side:
-						correct = 1
-					else:
-						correct = 0
-				output_file.write(','.join([str(trial),str(target_side),str(side),str(sub_response),str(correct),str(response_time),str(cumulative_response_time),str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(blank_onset),str(blank_dur),str(mask_onset),str(mask_dur),str(response_onset),str(response_dur),target_side,version+'\n']))
+				if sub_response == side:
+					correct = 1
+				else:
+					correct = 0
+				output_file.write(','.join([str(trial),str(side),str(sub_response),str(correct),str(response_time),str(cumulative_response_time),str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity)+'\n']))
 				output_file.flush()
 
 	if not responded:
-		if version == 'go-nogo' and target_type == 'target':
-			correct = 1
-		else:
-			correct = 0
-		output_file.write(','.join([str(trial),str(target_side),str(side),'NA',str(correct),'NA','NA',str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(blank_onset),str(blank_dur),str(mask_onset),str(mask_dur),str(response_onset),str(response_dur),str(target_side),str(version)+'\n']))
+		correct = 0
+		output_file.write(','.join([str(trial),str(side),'NA',str(correct),'NA','NA',str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity)+'\n']))
 		output_file.flush()
 	#timing update
-	last_trial_dur = iti_dur + stim_dur + blank_dur + mask_dur + response_dur
+	last_trial_dur = iti_dur + stim_dur + response_dur
 	if correct == 1:
 		correctInARow += 1
 		if correctInARow == 2:
-			stim_dur -= stepsize
+			opacity -= stepsize
 			correctInARow = 0
 	else:
 		correctInARow = 0
-		stim_dur += stepsize
-	if stim_dur < stepsize:
-		stim_dur = stepsize
+		opacity += stepsize
+	if opacity < 0:
+		opacity = 0
 
 output_file.close()
 win.close()
