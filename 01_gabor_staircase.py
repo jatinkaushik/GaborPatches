@@ -101,6 +101,14 @@ fixation = visual.ShapeStim(
     fillColor=[1,1,1], fillColorSpace='rgb',
     opacity=1, depth=0.0, interpolate=True)
 
+fixation_green = visual.ShapeStim(
+    win=win, name='polygon', vertices='cross',
+    size=(20, 20),
+    ori=0, pos=(0, 0),
+    lineWidth=1, lineColor=[1,1,1], lineColorSpace='rgb',
+    fillColor=[0,1,0], fillColorSpace='rgb',
+    opacity=1, depth=0.0, interpolate=True)
+
 ###text
 #headers
 instructions_header = visual.TextStim(win, text='INSTRUCTIONS', color = 'black', alignHoriz = 'center', pos=(0.0,.8))
@@ -305,6 +313,7 @@ for shuffled_trial in trial_order:
 	# iti presentation
 	#Add the Parallelport stuff here -> see parallel_port.py
 	while experiment_clock.getTime() < stim_onset:
+		fixation_green.draw()
 		win.flip()
 	#stim presentation
 	responded = False
@@ -313,7 +322,10 @@ for shuffled_trial in trial_order:
 	while experiment_clock.getTime() < response_end:
 		n.draw()
 		gabor.draw()
-		fixation.draw()
+		if responded:
+			fixation_green.draw()
+		else:
+			fixation.draw()
 		win.flip()
 		#event.waitKeys(keyList=reskeys_list)
 		#response collection
