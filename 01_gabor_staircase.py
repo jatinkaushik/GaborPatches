@@ -16,10 +16,10 @@ import csv
 
 ###### EDIT PARAMETERS BELOW #######
 
-num_trials = 10  # number of trials in the experiment on target side
-stim_dur = 2.0     # time in seconds that the subliminal stim appears on the screen [strong,weak,catch]
+num_trials = 30  # number of trials in the experiment on target side
+stim_dur = 1.     # time in seconds that the subliminal stim appears on the screen [strong,weak,catch]
 stepsize = 0.005     # The stepsize for the staircase procedure
-response_dur = 2.0   # time the response period stays on the screen
+response_dur = 1.   # time the response period stays on the screen
 iti_durs = [.5,1]  # time with no no image present between trials
 stim_size = 512
 initalOpacity = 0.07         #size of the stimulus on screen
