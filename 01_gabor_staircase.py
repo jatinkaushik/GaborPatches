@@ -16,13 +16,13 @@ import csv
 
 ###### EDIT PARAMETERS BELOW #######
 
-num_trials = 100  # number of trials in the experiment on target side
+num_trials = 40  # number of trials in the experiment on target side
 stim_dur = 1.     # time in seconds that the subliminal stim appears on the screen [strong,weak,catch]
-stepsize = 0.005     # The stepsize for the staircase procedure
+stepsize = 0.05     # The stepsize for the staircase procedure
 response_dur = 1.   # time the response period stays on the screen
 iti_durs = [.5,1]  # time with no no image present between trials
 stim_size = 256
-initalOpacity = 0.07         #size of the stimulus on screen
+initalOpacity = 0.15         #size of the stimulus on screen
 response_keys = {'left':'b','right':'z'}     # keys to use for a left response and a right response
 response_keys_inv = {v: k for k, v in response_keys.items()}
 reskeys_list = ['b','z']
@@ -177,7 +177,7 @@ output_file_path = 'results/%s_%s_%s.csv'%(subid,session,time_stamp)
 output_file = open(output_file_path,'w+')
 
 ###TO DO
-output_file.write('trial,trial_type,response,correct,response_time,cumulative_response_time,iti_onset,iti_dur,stim_onset,stim_dur,opacity\n')
+output_file.write('trial,trial_type,response,correct,response_time,cumulative_response_time,iti_onset,iti_dur,stim_onset,stim_dur,opacity,currentDirection\n')
 output_file.flush()
 
 
@@ -254,6 +254,12 @@ experiment_clock.reset()
 correctInARow = 0
 opacity = initalOpacity
 trial = 0
+reversal_counter = 0
+currentDirection = ''
+directions = ['a'] * (len(trial_order) + 1)
+#save opacities
+
+opacities = [0] * (len(trial_order)+1)
 for shuffled_trial in trial_order:
 	trial += 1
 	iti_dur = choice(iti_durs)
@@ -309,19 +315,30 @@ for shuffled_trial in trial_order:
 				sub_response = response_keys_inv[response[0][0]]
 				if sub_response == side:
 					correct = 1
+					currentDirection = 'down'
 				else:
 					correct = 0
-				output_file.write(','.join([str(trial),str(side),str(sub_response),str(correct),str(response_time),str(cumulative_response_time),str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity)+'\n']))
+					currentDirection = 'up'
+				output_file.write(','.join([str(trial),str(side),str(sub_response),str(correct),str(response_time),str(cumulative_response_time),str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity),str(currentDirection)+'\n']))
 				output_file.flush()
 
 	if not responded:
 		correct = 0
 		fixation.draw()
-		output_file.write(','.join([str(trial),str(side),'NA',str(correct),'NA','NA',str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity)+'\n']))
+		output_file.write(','.join([str(trial),str(side),'NA',str(correct),'NA','NA',str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity),str(currentDirection)+'\n']))
 		output_file.flush()
 
 	#timing update
 	last_trial_dur = iti_dur + stim_dur + response_dur
+	#change stimulus
+	directions[trial] = currentDirection
+		#reduce stepsize
+
+
+	if trial > 1:
+		if not directions[trial] == directions[trial-1]:
+			stepsize = stepsize / 1.25
+
 	if correct == 1:
 		correctInARow += 1
 		if correctInARow == 2:
@@ -332,6 +349,13 @@ for shuffled_trial in trial_order:
 		opacity += stepsize
 	if opacity < 0:
 		opacity = 0
+
+
+
+
+
+
+
 
 output_file.close()
 win.close()
