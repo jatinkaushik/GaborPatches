@@ -139,7 +139,7 @@ gabor_right_example = visual.GratingStim(win = win, tex = gabor_tex_example_righ
 
 ###text
 #headers
-instructions_header = visual.TextStim(win, text='INSTRUCTIONS', color = 'black', alignHoriz = 'center', alignVert = 'top', pos = (0.0,300.))
+instructions_header = visual.TextStim(win, text='INSTRUCTIONS', color = 'black', alignHoriz = 'center', alignVert = 'top', pos = (0.0,250.))
 experiment_header = visual.TextStim(win, text='MAIN EXPERIMENT', color = 'black', alignHoriz = 'center',  alignVert = 'top', pos = (0.0,0.0))
 
 #Left
@@ -285,7 +285,7 @@ for shuffled_trial in trial_order:
 	# iti presentation
 	#Add the Parallelport stuff here -> see parallel_port.py
 	while experiment_clock.getTime() < stim_onset:
-		fixation_green.draw()
+		fixation.draw()
 		win.flip()
 	#stim presentation
 	responded = False
@@ -294,10 +294,9 @@ for shuffled_trial in trial_order:
 	while experiment_clock.getTime() < response_end:
 		n.draw()
 		gabor.draw()
+		fixation.draw()
 		if responded:
 			fixation_green.draw()
-		else:
-			fixation.draw()
 		win.flip()
 		#event.waitKeys(keyList=reskeys_list)
 		#response collection
@@ -317,8 +316,10 @@ for shuffled_trial in trial_order:
 
 	if not responded:
 		correct = 0
+		fixation.draw()
 		output_file.write(','.join([str(trial),str(side),'NA',str(correct),'NA','NA',str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity)+'\n']))
 		output_file.flush()
+
 	#timing update
 	last_trial_dur = iti_dur + stim_dur + response_dur
 	if correct == 1:
