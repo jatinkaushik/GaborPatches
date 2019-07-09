@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+    #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from psychopy import  gui, visual, core, data, event, logging
@@ -16,12 +16,12 @@ import csv
 
 ###### EDIT PARAMETERS BELOW #######
 
-num_trials = 30  # number of trials in the experiment on target side
+num_trials = 100  # number of trials in the experiment on target side
 stim_dur = 1.     # time in seconds that the subliminal stim appears on the screen [strong,weak,catch]
 stepsize = 0.005     # The stepsize for the staircase procedure
 response_dur = 1.   # time the response period stays on the screen
 iti_durs = [.5,1]  # time with no no image present between trials
-stim_size = 512
+stim_size = 256
 initalOpacity = 0.07         #size of the stimulus on screen
 response_keys = {'left':'b','right':'z'}     # keys to use for a left response and a right response
 response_keys_inv = {v: k for k, v in response_keys.items()}
@@ -29,9 +29,8 @@ reskeys_list = ['b','z']
 pix_size = .001
 
 practice_iti_dur = 2
-practice_stim_dur = .3
-practice_blank_dur = .033
-practice_mask_dur = .3
+practice_stim_dur = 1.5
+
 
 
 ###### STOP EDITING BELOW THIS LINE #######
@@ -73,7 +72,7 @@ rd.shuffle(trial_order)
 ### Visuals ###
 
 #window
-win = visual.Window(size=[800, 600],  screen = 0, fullscr = False, units = 'pix', blendMode = 'avg')
+win = visual.Window(size=[800, 600],  screen = 0, fullscr = False, units = 'pix')
 win.setMouseVisible(False)
 
 #Gabor PARAMETERS
@@ -84,6 +83,13 @@ sf = 10 / X; # cycles per pixel
 left = 357; #left angle in deg
 right = 3; #right angle in deg
 noiseTexture = random([X,X])*2.0-1. # a X-by-X array of random numbers in [-1,1]
+
+noiseTexture_example = random([256,256])*2.0-1. # a X-by-X array of random numbers in [-1,1]
+
+n_example = visual.GratingStim(
+    win = win, mask='gauss', tex = noiseTexture_example,
+    size = 256, contrast = 1.0, opacity = 1.0,
+)
 
 
 # noise patch
@@ -109,49 +115,56 @@ fixation_green = visual.ShapeStim(
     fillColor=[0,1,0], fillColorSpace='rgb',
     opacity=1, depth=0.0, interpolate=True)
 
+
+gabor_tex_example_left = (
+		    visual.filters.makeGrating(res=256, cycles=256 * sf, ori = 357, gratType = "sin" ) *
+		    visual.filters.makeMask(matrixSize=256, shape="gauss", range=[0, 1])
+		)
+
+
+gabor_tex_example_right = (
+		    visual.filters.makeGrating(res=256, cycles=256 * sf, ori = 3, gratType = "sin" ) *
+		    visual.filters.makeMask(matrixSize=256, shape="gauss", range=[0, 1])
+		)
+
+
+			# signal grating patch
+gabor_left_example_vis = visual.GratingStim(win = win, tex = gabor_tex_example_left, mask = None, units = 'pix',  size = 256, contrast = 1.0, opacity = 1, pos= (-200,-100.0))
+
+gabor_right_example_vis = visual.GratingStim(win = win, tex = gabor_tex_example_right, mask = None, units = 'pix',  size = 256, contrast = 1.0, opacity = 1, pos= (200,-100.0))
+
+gabor_left_example = visual.GratingStim(win = win, tex = gabor_tex_example_left, mask = None, units = 'pix',  size = 256, contrast = 1.0, opacity = .8)
+
+gabor_right_example = visual.GratingStim(win = win, tex = gabor_tex_example_right, mask = None, units = 'pix',  size = 256, contrast = 1.0, opacity = .8)
+
 ###text
 #headers
-instructions_header = visual.TextStim(win, text='INSTRUCTIONS', color = 'black', alignHoriz = 'center', pos=(0.0,.8))
-experiment_header = visual.TextStim(win, text='MAIN EXPERIMENT', color = 'black', alignHoriz = 'center', pos=(0.0,.8))
+instructions_header = visual.TextStim(win, text='INSTRUCTIONS', color = 'black', alignHoriz = 'center', alignVert = 'top', pos = (0.0,300.))
+experiment_header = visual.TextStim(win, text='MAIN EXPERIMENT', color = 'black', alignHoriz = 'center',  alignVert = 'top', pos = (0.0,0.0))
 
-# #instructions
-# instructions_text1 = visual.TextStim(win, text='In each trial of this experiment a diamond shape will appear in the middle of the screen', height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.2))
-# instructions_text2 = visual.TextStim(win, text='It will have a point missing from its left side or its right side.', height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.2))
-#
-# instructions_text3 = visual.TextStim(win, text='left side missing                 right side missing', height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,-0.5))
-# instructions_text4 = visual.TextStim(win, text='The diamond will be followed immediately by a frame shape.', height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.2))
-# frame_example = visual.ImageStim(
-# 	win=win,
-# 	image="pics/mask.png",
-# 	units="pix",
-# 	pos=[0,-50])
-#
-#
-# instructions_text5 = visual.TextStim(win, text='Press the "%s" key if the frame is preceded by a diamond missing a point on its %s side.'%(response_keys['left'],'left'), height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.0))
-# instructions_text6 = visual.TextStim(win, text='Press the "%s" key if the frame is preceded by a diamond missing a point on its %s side.'%(response_keys['right'],'right'), height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,-0.1))
-#
-#
-# instructions_text1.wrapWidth = 4
-# instructions_text2.wrapWidth = 4
-# instructions_text3.wrapWidth = 4
-# instructions_text4.wrapWidth = 4
-# instructions_text5.wrapWidth = 4
-# instructions_text6.wrapWidth = 4
-#
-# instructions2_text = [visual.TextStim(win, text='Geat job! Make sense?', height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.1)),
-# 			visual.TextStim(win, text='In the real experiment you will only have %s seconds to respond.'%response_dur, height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.0))]
-#
-# for instruction in instructions2_text:
-# 	instruction.wrapWidth = 4
-#
-#
-# #mis
-# example_text = visual.TextStim(win, text='Here are some practice examples . . .', height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.0))
-# get_ready_text = [visual.TextStim(win, text='Now let\'s move on the the real experiment.', height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.0)),
-# 				  visual.TextStim(win, text='Get ready . . .', height = .065, color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,-0.1))]
-# press_left_text = visual.TextStim(win, text='Press the "%s" key'%response_keys['left'], color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,stim_size+.2))
-# press_right_text = visual.TextStim(win, text='Press the "%s" key'%response_keys['right'], color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,stim_size+.2))
-# press_nothing_text = visual.TextStim(win, text='Press nothing', color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,stim_size+.2))
+#Left
+left_text = visual.TextStim(win, text='LEFT', color = 'black', alignHoriz = 'center', alignVert = 'top', pos = (-200.0,100))
+right_text = visual.TextStim(win, text='RIGHT', color = 'black', alignHoriz = 'center', alignVert = 'top', pos = (200.0,100))
+
+#instructions
+instructions_text1 = visual.TextStim(win, text='In each trial of this experiment angled black and white stripes will appear in the middle of the screen', color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.0))
+instructions_text2 = visual.TextStim(win, text='The stripes will be angled to the left or to the right', color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,160.0))
+
+
+instructions_text5 = visual.TextStim(win, text='Press the "%s" key if the stripes are angled to the %s side.'%(response_keys['left'],'left'), color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,50.0))
+instructions_text6 = visual.TextStim(win, text='Press the "%s" key if if the stripes are angled to the %s side.'%(response_keys['right'],'right'),  color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,-50))
+
+
+
+instructions2_text = visual.TextStim(win, text='Geat job! Make sense?',  color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.1))
+
+
+
+#mis
+example_text = visual.TextStim(win, text='Here are some practice examples . . .',  color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.0))
+get_ready_text = visual.TextStim(win, text='Now let\'s move on the the real experiment.', color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,0.0))
+press_left_text = visual.TextStim(win, text='Press the "%s" key'%response_keys['left'], color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,-200.))
+press_right_text = visual.TextStim(win, text='Press the "%s" key'%response_keys['right'], color = 'black', alignHoriz = 'center', alignVert = 'center', pos=(0.0,-200))
 
 ### Timing ###
 
@@ -178,93 +191,52 @@ event.globalKeys.add(key=quit_key, func=quit_experiment)
 
 ##### RUN EXPERIMENT #####
 
-# ###  instructions  ###
-# #explain task
-# if show_practice:
-# 	#intro to experiment
-# 	instructions_header.draw()
-# 	instructions_text1.draw()
-# 	win.flip()
-# 	event.waitKeys(keyList='space')
-# #
-# #	#show missing corner shapes
-# 	instructions_header.draw()
-# 	instructions_text2.draw()
-# 	instructions_text3.draw()
-# 	left_example.draw()
-# 	right_example.draw()
-# 	win.flip()
-# 	event.waitKeys(keyList='space')
-# #
-# #	#show frame shape
-# 	instructions_header.draw()
-# 	instructions_text4.draw()
-# 	frame_example.draw()
-# 	win.flip()
-# 	event.waitKeys(keyList='space')
-# #
-# #	#tell what buttons to press
-# 	instructions_header.draw()
-# 	instructions_text5.draw()
-# 	instructions_text6.draw()
-# 	win.flip()
-# 	event.waitKeys(keyList='space')
-# #
-# 	instructions_header.draw()
-# 	example_text.draw()
-# 	win.flip()
-# 	event.waitKeys(keyList='space')
-# #
-# 	for practice_side in ['left','right']:
-# 		instructions_header.draw()
-# 		win.flip()
-# 		core.wait(practice_iti_dur)
-# 		#press practice stim
-# 		practice_clock.reset()
-# 		while practice_clock.getTime() < practice_stim_dur:
-# 			instructions_header.draw()
-# 			white_diamond.draw()
-# 			blockers[practice_side].draw()
-# 			win.flip()
-# 		#blank screen
-# 		while practice_clock.getTime() < practice_stim_dur+practice_blank_dur:
-# 			instructions_header.draw()
-# 			win.flip()
-# 		#press mask
-# 		while practice_clock.getTime() < practice_stim_dur+practice_blank_dur+practice_mask_dur:
-# 			instructions_header.draw()
-# 			mask.draw()
-# 			black_diamond.draw()
-# 			if version == 'go-nogo' and target_side == practice_side:
-# 				press_nothing_text.draw()
-# 			else:
-# 				if practice_side == 'left':
-# 					press_left_text.draw()
-# 				else:
-# 					press_right_text.draw()
-# 			win.flip()
-# 		#response
-# 		instructions_header.draw()
-# 		if practice_side == 'left':
-# 			press_left_text.draw()
-# 		else:
-# 			press_right_text.draw()
-# 		win.flip()
-# 		event.waitKeys(keyList=response_keys[practice_side])
-#
-#
-# 	#Post practice text, get ready for experiment
-# 	instructions_header.draw()
-# 	for instruction in instructions2_text:
-# 		instruction.draw()
-# 	win.flip()
-# 	event.waitKeys(keyList='space')
-# 	experiment_header.draw()
-# 	for get_ready in get_ready_text:
-# 		get_ready.draw()
-# 	win.flip()
-# 	event.waitKeys(keyList='space')
-#
+###  instructions  ###
+#explain task
+if show_practice:
+	#intro to experiment
+	instructions_header.draw()
+	instructions_text1.draw()
+	win.flip()
+	event.waitKeys(keyList='space')
+	instructions_text2.draw()
+	gabor_left_example_vis.draw()
+	left_text.draw()
+	right_text.draw()
+	gabor_right_example_vis.draw()
+	win.flip()
+	event.waitKeys(keyList='space')
+	instructions_text5.draw()
+	instructions_text6.draw()
+	win.flip()
+	event.waitKeys(keyList='space')
+	example_text.draw()
+	win.flip()
+	event.waitKeys(keyList='space')
+	n_example.draw()
+	gabor_left_example.draw()
+	press_left_text.draw()
+	win.flip()
+	event.waitKeys(keyList=response_keys['left'])
+
+	for i in range(80):
+		fixation.draw()
+		win.flip()
+
+
+	#right
+
+
+	n_example.draw()
+	gabor_right_example.draw()
+	press_right_text.draw()
+	win.flip()
+	event.waitKeys(keyList=response_keys['right'])
+	instructions2_text.draw()
+	win.flip()
+	event.waitKeys(keyList='space')
+	get_ready_text.draw()
+
 
 ### Main Experiment ###servicde
 #clock reset
