@@ -321,12 +321,12 @@ for shuffled_trial in trial_order:
 					currentDirection = 'up'
 				output_file.write(','.join([str(trial),str(side),str(sub_response),str(correct),str(response_time),str(cumulative_response_time),str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity),str(currentDirection)+'\n']))
 				output_file.flush()
-
 	if not responded:
 		correct = 0
 		fixation.draw()
 		output_file.write(','.join([str(trial),str(side),'NA',str(correct),'NA','NA',str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity),str(currentDirection)+'\n']))
 		output_file.flush()
+		win.flip()
 
 	#timing update
 	last_trial_dur = iti_dur + stim_dur + response_dur
