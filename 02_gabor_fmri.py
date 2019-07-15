@@ -333,7 +333,7 @@ for block in range(nr_blocks):
                 if len(response) > 0:
                     responded = True
                     cumulative_response_time = round(experiment_clock.getTime(),3)
-                    response_time = round(experiment_clock.getTime() - elapse_time - iti_dur,3)
+                    response_time = round(experiment_clock.getTime() - elapse_time,3)
                     sub_response = response_keys_inv[response[0][0]]
                     if sub_response == side:
                         correct = 1
