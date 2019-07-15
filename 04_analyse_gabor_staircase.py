@@ -35,14 +35,23 @@ data = pandas.read_csv(file)
 data['corr_factor'] = data['correct'].astype('category')
 data['rounded_opacity'] = round(data['opacity'],5)
 
+data['shifted_direction'] = data['currentDirection'].shift(-1)
+data['reversalPoint'] = data.shifted_direction.eq(data.shifted_direction.shift())
+new_data = data.drop([data.index[0],data.index[-1]])
+threshold = round(new_data[new_data['reversalPoint'] == False]['opacity'].mean(),4)
+print(threshold)
 #Plot1
 
-
+w = 8
+h = 6
+d = 96
+plt.figure(figsize= (w,h), dpi = d)
 plt.plot(data['trial'], data['opacity'])
 plt.scatter(data = data, x='trial', y = 'opacity', c = data['corr_factor'].apply(lambda x: colors[x]), label = 'corr_factor', s = 1)
 plt.title('Trial pathway')
 plt.xlabel('Trial')
 plt.ylabel('Opacity')
+
 plt.savefig(save_dir+'/'+filename+'_trialPath.pdf')
 plt.close()
 
@@ -67,6 +76,11 @@ pCorrect = np.divide(nCorrect,nTrials)
 #dataframe for correctness, nTrials, etc
 
 sumData = pd.DataFrame({'opacities': opacities.astype('str'),'pCorrect':pCorrect*100,'nTrials':nTrials})
+
+
+
+
+
 plt.scatter(data = sumData, x = 'opacities', y = 'pCorrect', s = 'nTrials')
 
 plt.title('Correct Responses by opacity level')

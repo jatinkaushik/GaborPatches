@@ -16,13 +16,13 @@ import csv
 
 ###### EDIT PARAMETERS BELOW #######
 
-num_trials = 40  # number of trials in the experiment on target side
+num_trials = 100  # number of trials in the experiment on target side
 stim_dur = 1.     # time in seconds that the subliminal stim appears on the screen [strong,weak,catch]
-stepsize = 0.05     # The stepsize for the staircase procedure
+stepsize = 0.025     # The stepsize for the staircase procedure
 response_dur = 1.   # time the response period stays on the screen
 iti_durs = [.5,1]  # time with no no image present between trials
 stim_size = 256
-initalOpacity = 0.15         #size of the stimulus on screen
+initalOpacity = 0.10         #size of the stimulus on screen
 response_keys = {'left':'b','right':'z'}     # keys to use for a left response and a right response
 response_keys_inv = {v: k for k, v in response_keys.items()}
 reskeys_list = ['b','z']
@@ -337,7 +337,7 @@ for shuffled_trial in trial_order:
 
 	if trial > 1:
 		if not directions[trial] == directions[trial-1]:
-			stepsize = stepsize / 1.25
+			stepsize = stepsize / 1.5
 
 	if correct == 1:
 		correctInARow += 1
