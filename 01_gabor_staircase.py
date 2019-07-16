@@ -9,6 +9,7 @@ from numpy.random import random
 import random as rd
 import numpy as np
 import csv
+import os
 
 ##### SETUP #####
 
@@ -171,9 +172,14 @@ press_right_text = visual.TextStim(win, text='Press the "%s" key'%response_keys[
 practice_clock = core.Clock()
 experiment_clock = core.Clock()
 
+#Create results folder
+
+if not os.path.exists('my_folder'):
+    os.makedirs('my_folder')
+
 ### Results Logging ###
 time_stamp = strftime('%d-%m-%Y_%H:%M:%S').replace(':','_')
-output_file_path = 'results/%s_%s_%s.csv'%(subid,session,time_stamp)
+output_file_path = 'results/%s_%s_%s_staircase.csv'%(subid,session,time_stamp)
 output_file = open(output_file_path,'w+')
 
 ###TO DO
