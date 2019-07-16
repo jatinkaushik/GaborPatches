@@ -18,7 +18,7 @@ import os
 ###### EDIT PARAMETERS BELOW #######
 
 num_trials = 100  # number of trials in the experiment on target side
-stim_dur = 1.     # time in seconds that the subliminal stim appears on the screen [strong,weak,catch]
+stim_dur = 2.     # time in seconds that the subliminal stim appears on the screen [strong,weak,catch]
 stepsize = 0.025     # The stepsize for the staircase procedure
 response_dur = 1.   # time the response period stays on the screen
 iti_durs = [.5,1]  # time with no no image present between trials
