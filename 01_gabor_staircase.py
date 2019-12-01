@@ -1,4 +1,4 @@
-    #!/usr/bin/env python3
+4    #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from psychopy import  gui, visual, core, data, event, logging
@@ -24,9 +24,9 @@ response_dur = 1.   # time the response period stays on the screen
 iti_durs = [.5,1]  # time with no no image present between trials
 stim_size = 256
 initalOpacity = 0.10         #size of the stimulus on screen
-response_keys = {'left':'b','right':'z'}     # keys to use for a left response and a right response
+response_keys = {'left':'b','right':'n'}     # keys to use for a left response and a right response
 response_keys_inv = {v: k for k, v in response_keys.items()}
-reskeys_list = ['b','z']
+reskeys_list = ['b','n']
 pix_size = .001
 
 practice_iti_dur = 2
@@ -43,6 +43,7 @@ dlg.addField('Subject ID:')
 dlg.addField('Session:')
 dlg.addField('Scanner', choices = ['yes','no'])
 dlg.addField('Practice', choices = ['yes','no'])
+dlg.addField('Visual Field', choices = ['left', 'right'])
 exp_input = dlg.show()
 
 subid = exp_input[0]
@@ -56,6 +57,13 @@ if exp_input[3] == 'yes':
 else:
 	show_practice = False
 
+vis_field = [0,0]
+xpos = 400
+
+if exp_input[4] == 'left':
+	vis_field = [-xpos,0]
+elif exp_input[4] == 'right':
+	vis_field = [xpos,0]
 
 #get shuffled list of trials
 trial_states = {}
@@ -73,7 +81,7 @@ rd.shuffle(trial_order)
 ### Visuals ###
 
 #window
-win = visual.Window(size=[800, 600],  screen = 0, fullscr = False, units = 'pix')
+win = visual.Window(size=[800, 600],  screen = 0, fullscr = True, units = 'pix')
 win.setMouseVisible(False)
 
 #Gabor PARAMETERS
@@ -97,6 +105,7 @@ n_example = visual.GratingStim(
 n = visual.GratingStim(
     win = win, mask='gauss', tex = noiseTexture,
     size = X, contrast = 1.0, opacity = 1.0,
+	pos = vis_field
 )
 
 # Fixation Cross
@@ -292,7 +301,7 @@ for shuffled_trial in trial_order:
 	response_end = elapse_time + iti_dur + stim_dur
 
 			# signal grating patch
-	gabor = visual.GratingStim(win = win, tex = gabor_tex, mask = None, units = 'pix',  size = X, contrast = 1.0, opacity = opacity)
+	gabor = visual.GratingStim(win = win, tex = gabor_tex, mask = None, units = 'pix',  size = X, contrast = 1.0, opacity = opacity, pos = vis_field)
 
 	# iti presentation
 	#Add the Parallelport stuff here -> see parallel_port.py
