@@ -60,6 +60,8 @@ else:
 vis_field = [0,0]
 xpos = 400
 
+hemifield = exp_input[4]
+
 if exp_input[4] == 'left':
 	vis_field = [-xpos,0]
 elif exp_input[4] == 'right':
@@ -192,7 +194,7 @@ output_file_path = 'results/%s_%s_%s_staircase.csv'%(subid,session,time_stamp)
 output_file = open(output_file_path,'w+')
 
 ###TO DO
-output_file.write('trial,trial_type,response,correct,response_time,cumulative_response_time,iti_onset,iti_dur,stim_onset,stim_dur,opacity,currentDirection\n')
+output_file.write('trial,trial_type,response,correct,response_time,cumulative_response_time,iti_onset,iti_dur,stim_onset,stim_dur,opacity,currentDirection,visfield\n')
 output_file.flush()
 
 
@@ -334,12 +336,12 @@ for shuffled_trial in trial_order:
 				else:
 					correct = 0
 					currentDirection = 'up'
-				output_file.write(','.join([str(trial),str(side),str(sub_response),str(correct),str(response_time),str(cumulative_response_time),str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity),str(currentDirection)+'\n']))
+				output_file.write(','.join([str(trial),str(side),str(sub_response),str(correct),str(response_time),str(cumulative_response_time),str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity),str(currentDirection),str(hemifield)+'\n']))
 				output_file.flush()
 	if not responded:
 		correct = 0
 		fixation.draw()
-		output_file.write(','.join([str(trial),str(side),'NA',str(correct),'NA','NA',str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity),str(currentDirection)+'\n']))
+		output_file.write(','.join([str(trial),str(side),'NA',str(correct),'NA','NA',str(iti_onset),str(iti_dur),str(stim_onset),str(stim_dur),str(opacity),str(currentDirection),str(hemifield)+'\n']))
 		output_file.flush()
 		win.flip()
 
@@ -352,7 +354,7 @@ for shuffled_trial in trial_order:
 
 	if trial > 1:
 		if not directions[trial] == directions[trial-1]:
-			stepsize = stepsize / 1.5
+			stepsize = stepsize / 1.3
 
 	if correct == 1:
 		correctInARow += 1
