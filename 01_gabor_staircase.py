@@ -19,7 +19,7 @@ import os
 
 num_trials = 100  # number of trials in the experiment on target side
 stim_dur = 2.     # time in seconds that the subliminal stim appears on the screen [strong,weak,catch]
-stepsize = 0.025     # The stepsize for the staircase procedure
+stepsize = 0.05     # The stepsize for the staircase procedure
 response_dur = 1.   # time the response period stays on the screen
 iti_durs = [.5,1]  # time with no no image present between trials
 stim_size = 256
@@ -83,7 +83,7 @@ rd.shuffle(trial_order)
 ### Visuals ###
 
 #window
-win = visual.Window(size=[800, 600],  screen = 0, fullscr = True, units = 'pix')
+win = visual.Window(size=[1024, 768],  screen = 0, fullscr = False, units = 'pix')
 win.setMouseVisible(False)
 
 #Gabor PARAMETERS
@@ -354,7 +354,8 @@ for shuffled_trial in trial_order:
 
 	if trial > 1:
 		if not directions[trial] == directions[trial-1]:
-			stepsize = stepsize / 1.3
+			stepsize = stepsize / 1.1
+
 
 	if correct == 1:
 		correctInARow += 1
